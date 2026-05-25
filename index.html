@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nickel Memorial</title>
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:linear-gradient(135deg,#0f0f0f,#1b1b1b);
+color:#fff;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+overflow:hidden;
+}
+
+.wrapper{
+position:relative;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.card{
+background:rgba(255,255,255,0.06);
+backdrop-filter: blur(10px);
+padding:20px;
+border-radius:16px;
+max-width:500px;
+width:100%;
+box-shadow:0 0 30px rgba(0,0,0,0.5);
+position:relative;
+z-index:2;
+}
+
+h1{margin:0 0 10px;}
+
+button{
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+.lang{
+background:#444;
+color:white;
+}
+
+.msg{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:none;
+margin-top:10px;
+}
+
+.entry{
+margin-top:10px;
+padding:10px;
+background:rgba(255,255,255,0.05);
+border-radius:10px;
+}
+
+/* CANDLE */
+.candle{
+margin-bottom:15px;
+position:relative;
+width:20px;
+height:60px;
+background:#f5d7a1;
+border-radius:6px;
+box-shadow:0 0 10px rgba(255,200,100,0.3);
+}
+
+.flame{
+position:absolute;
+top:-18px;
+left:50%;
+transform:translateX(-50%);
+width:14px;
+height:22px;
+background:orange;
+border-radius:50% 50% 50% 50%;
+animation:flicker 0.15s infinite alternate;
+box-shadow:0 0 20px rgba(255,140,0,0.8);
+}
+
+@keyframes flicker{
+0%{transform:translateX(-50%) scale(1) rotate(-2deg); opacity:0.8;}
+100%{transform:translateX(-50%) scale(1.2) rotate(2deg); opacity:1;}
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<!-- candle ABOVE card -->
+<div class="candle">
+  <div class="flame"></div>
+</div>
+
+<div class="card">
+<h1 id="title">Nickel Memorial</h1>
+<p id="text">Rest in peace, dear friend's loyal companion. In memories we'll stay together, where love and friendship will never fade.</p>
+<p><small>2026 • Monday 25 May</small></p>
+
+<button class="lang" onclick="toggleLang()">Change language</button>
+
+<h3>💌 Leave a message</h3>
+<input class="msg" id="name" placeholder="Your name" />
+<textarea class="msg" id="message" placeholder="Your message"></textarea>
+<button onclick="addMessage()">Send</button>
+
+<div id="messages"></div>
+</div>
+
+</div>
+
+<script>
+let lang = "en";
+
+const texts = {
+ en: {
+  title:"Nickel Memorial",
+  text:"Rest in peace, dear friend's loyal companion. In memories we'll stay together, where love and friendship will never fade."
+ },
+ fr: {
+  title:"Mémorial Nickel",
+  text:"Repose en paix, fidèle compagnon d'un ami cher. Dans nos souvenirs, nous resterons ensemble, où l'amour et l'amitié ne s'effaceront jamais."
+ }
+};
+
+function toggleLang(){
+ lang = lang === "en" ? "fr" : "en";
+ document.getElementById("title").innerText = texts[lang].title;
+ document.getElementById("text").innerText = texts[lang].text;
+}
+
+function addMessage(){
+ const name = document.getElementById("name").value;
+ const message = document.getElementById("message").value;
+ if(!name || !message) return;
+
+ const data = JSON.parse(localStorage.getItem("memorial") || "[]");
+ data.push({name,message});
+ localStorage.setItem("memorial", JSON.stringify(data));
+ render();
+
+ document.getElementById("name").value="";
+ document.getElementById("message").value="";
+}
+
+function render(){
+ const box = document.getElementById("messages");
+ box.innerHTML="";
+ const data = JSON.parse(localStorage.getItem("memorial") || "[]");
+ data.forEach(d=>{
+  const div = document.createElement("div");
+  div.className="entry";
+  div.innerHTML = `<b>${d.name}</b><br>${d.message}`;
+  box.appendChild(div);
+ });
+}
+
+render();
+</script>
+
+</body>
+</html>
